@@ -1,4 +1,4 @@
-[![CircleCI](https://circleci.com/gh/alexeagle/angular-bazel-example.svg?style=svg)](https://circleci.com/gh/alexeagle/angular-bazel-example)
+[![CircleCI](https://circleci.com/gh/engalar/angular-bazel-example.svg?style=svg)](https://circleci.com/gh/alexeagle/angular-bazel-example)
 
 # Example of building an Angular app with Bazel
 
