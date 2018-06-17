@@ -5,34 +5,39 @@ load("@angular//:index.bzl", "ng_module")
 ng_module(
     name = "src",
     srcs = glob(["*.ts"]),
+    assets = [
+        ":app.component.html",
+    ],
     tsconfig = ":tsconfig.json",
-    deps = ["//src/hello-world"],
-)
-
-# Needed because the devserver only loads static files that appear under this
-# package.
-genrule(
-    name = "zone.js",
-    srcs = ["//:node_modules/zone.js/dist/zone.min.js"],
-    outs = ["zone.min.js"],
-    cmd = "cp $< $@",
+    deps = [
+        "//src/hello-world",
+        "//src/todos",
+    ],
 )
 
 load("@build_bazel_rules_typescript//:defs.bzl", "ts_devserver")
 
 ts_devserver(
     name = "devserver",
+    additional_root_paths = [
+        "angular_bazel_example/node_modules/zone.js/dist",
+        "angular_bazel_example/node_modules/@ngrx/store/bundles",
+    ],
     entry_module = "angular_bazel_example/src/main",
-    scripts = ["//:angular_bundles"],
+    scripts = [
+        ":require.config.js",
+        "//:angular_bundles",
+    ],
     serving_path = "/bundle.min.js",
     static_files = [
-        ":zone.js",
+        "//:node_modules/zone.js/dist/zone.min.js",
+        "//:node_modules/@ngrx/store/bundles/store.umd.min.js",
         "index.html",
     ],
     deps = ["//src"],
 )
 
-load("@build_bazel_rules_nodejs//:defs.bzl", "rollup_bundle", "nodejs_binary")
+load("@build_bazel_rules_nodejs//:defs.bzl", "nodejs_binary", "rollup_bundle")
 
 rollup_bundle(
     name = "bundle",
@@ -40,13 +45,22 @@ rollup_bundle(
     deps = ["//src"],
 )
 
-nodejs_binary(
+# Needed because the prodserver only loads static files that appear under this
+# package.
+genrule(
+    name = "zonejs",
+    srcs = ["//:node_modules/zone.js/dist/zone.min.js"],
+    outs = ["zone.min.js"],
+    cmd = "cp $< $@",
+)
+
+load("//tools/history-server:index.bzl", "history_server")
+
+history_server(
     name = "prodserver",
-    args = ["./src"],
     data = [
         "index.html",
         ":bundle",
-        ":zone.js",
+        ":zonejs",
     ],
-    entry_point = "http-server/bin/http-server",
 )

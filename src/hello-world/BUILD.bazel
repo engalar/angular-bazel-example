@@ -2,15 +2,12 @@ package(default_visibility = ["//visibility:public"])
 
 load("@angular//:index.bzl", "ng_module")
 load("@io_bazel_rules_sass//sass:sass.bzl", "sass_binary")
-load("@build_bazel_rules_typescript//:defs.bzl", "ts_library", "ts_web_test")
+load("@build_bazel_rules_typescript//:defs.bzl", "ts_library", "ts_web_test_suite")
 
 sass_binary(
     name = "hello-world-styles",
     src = "hello-world.component.scss",
-    deps = [
-        "//src/shared:colors",
-        "//src/shared:fonts",
-    ],
+    deps = ["//src/styles:shared"],
 )
 
 ng_module(
@@ -19,7 +16,10 @@ ng_module(
         "hello-world.component.ts",
         "hello-world.module.ts",
     ],
-    assets = [":hello-world-styles"],
+    assets = [
+        ":hello-world.component.html",
+        ":hello-world-styles",
+    ],
     tsconfig = "//src:tsconfig.json",
     deps = [
         "//src/lib",
@@ -34,9 +34,13 @@ ts_library(
     deps = [":hello-world"],
 )
 
-ts_web_test(
+ts_web_test_suite(
     name = "test",
-    bootstrap = ["//:angular_bootstrap_scripts"],
+    bootstrap = ["//:node_modules/zone.js/dist/zone-testing-bundle.js"],
+    browsers = [
+        "@io_bazel_rules_webtesting//browsers:chromium-local",
+        "@io_bazel_rules_webtesting//browsers:firefox-local",
+    ],
     deps = [
         ":test_lib",
         "//:angular_bundles",
