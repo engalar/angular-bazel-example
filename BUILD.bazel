@@ -37,6 +37,7 @@ filegroup(
         "*.js",
         "*.json",
         "*.d.ts",
+        "*.scss",
     ]]),
 )
 

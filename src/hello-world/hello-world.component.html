@@ -1,5 +1,12 @@
 <h1>Home</h1>
 
-<div>Hello {{ name }}</div>
+<div cdk-overlay-origin>Hello {{ name }}</div>
 
 <input type="text" [value]="name" (input)="name = $event.target.value"/>
+
+<div *cdkPortal>
+    <span>i am in overlay</span>
+</div>
+
+
+<button (click)="ope()">click</button>

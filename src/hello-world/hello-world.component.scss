@@ -1,1 +1,4 @@
+@import "./node_modules/@angular/cdk/overlay";
 @import "src/styles/shared";
+
+@include cdk-overlay();
